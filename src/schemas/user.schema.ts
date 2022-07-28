@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, trusted } from 'mongoose';
 import { genSalt, hash } from 'bcrypt';
 
 export enum AccountType {
@@ -26,7 +26,7 @@ export class User {
   @Prop()
   mobile: number;
 
-  @Prop()
+  @Prop({ default: trusted })
   status: boolean;
 
   @Prop({ required: true })
