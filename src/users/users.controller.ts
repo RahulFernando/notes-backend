@@ -2,7 +2,7 @@ import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { CreateUserDto } from './dto/create.dto';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller('/api/users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
@@ -16,6 +16,7 @@ export class UsersController {
         newUser,
       });
     } catch (error) {
+      console.log(error);
       return response.status(error.status).json(error.response);
     }
   }
