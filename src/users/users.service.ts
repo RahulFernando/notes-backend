@@ -11,10 +11,14 @@ import { User, UserDocument } from '../schemas/user.schema';
 import { CreateUserDto } from './dto/create.dto';
 import { IUser } from 'src/interfaces/user.interface';
 import { LoginUserDto } from './dto/login.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly mailService: MailService,
+  ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<IUser> {
     const user = await this.userModel.findOne({ email: createUserDto.email });
@@ -25,6 +29,10 @@ export class UsersService {
     }
 
     const newUser = await new this.userModel(createUserDto);
+
+    // send an email
+    await this.mailService.sendUserConfirmation(newUser);
+
     return newUser.save();
   }
 
