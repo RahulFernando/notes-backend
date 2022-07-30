@@ -20,6 +20,18 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
+  async seed(createUserDto: CreateUserDto): Promise<IUser> {
+    const admin = await this.userModel.findOne({ email: createUserDto.email });
+
+    // if exist return admin
+    if (admin) {
+      return admin;
+    }
+
+    const newAdmin = await new this.userModel(createUserDto);
+    return newAdmin.save();
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<IUser> {
     const user = await this.userModel.findOne({ email: createUserDto.email });
 

@@ -1,11 +1,19 @@
 import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { CreateUserDto } from './dto/create.dto';
 import { LoginUserDto } from './dto/login.dto';
 import { UsersService } from './users.service';
 
 @Controller('/api/users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UsersService) {
+    const admin = JSON.parse(
+      readFileSync(resolve(__dirname, '../seeds/admin.json'), 'utf8'),
+    );
+
+    userService.seed(admin).then(() => console.log('admin created!'));
+  }
 
   @Post()
   async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
