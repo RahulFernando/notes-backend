@@ -1,6 +1,16 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { JwtAuthGuard } from 'src/jwt-auth.guard';
+import { Roles } from 'src/roles.decorator';
+import { RolesGuard } from 'src/roles.guard';
 import { CreateUserDto } from './dto/create.dto';
 import { LoginUserDto } from './dto/login.dto';
 import { UsersService } from './users.service';
@@ -15,6 +25,8 @@ export class UsersController {
     userService.seed(admin).then(() => console.log('admin created!'));
   }
 
+  @Roles('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async createUser(@Res() response, @Body() createUserDto: CreateUserDto) {
     try {
