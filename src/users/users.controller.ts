@@ -3,6 +3,7 @@ import {
   Controller,
   HttpStatus,
   Post,
+  Get,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -34,6 +35,22 @@ export class UsersController {
       return response.status(HttpStatus.CREATED).json({
         message: 'User created successfully!',
         newUser,
+      });
+    } catch (error) {
+      return response.status(error.status).json(error.response);
+    }
+  }
+
+  @Roles('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get()
+  async getAllUsers(@Res() response) {
+    try {
+      const users = await this.userService.getAllUsers();
+
+      return response.status(200).json({
+        message: 'All users fetched successfully!',
+        users,
       });
     } catch (error) {
       return response.status(error.status).json(error.response);

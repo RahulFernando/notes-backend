@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../schemas/user.schema';
+import { AccountType, User, UserDocument } from '../schemas/user.schema';
 import { CreateUserDto } from './dto/create.dto';
 import { IUser } from 'src/interfaces/user.interface';
 import { MailService } from '../mail/mail.service';
@@ -39,5 +39,15 @@ export class UsersService {
     await this.mailService.sendUserConfirmation(newUser);
 
     return newUser.save();
+  }
+
+  async getAllUsers(): Promise<IUser[]> {
+    const users = await this.userModel
+      .find({
+        accountType: AccountType.Student,
+      })
+      .select('email status accountType');
+
+    return users;
   }
 }
